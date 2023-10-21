@@ -26,6 +26,7 @@ jobs:
         with:
           repository: PythonSwiftLink/Python-Apple-support
           ref: 3.10
+          token: ${{ secrets.Homebrew }}
           path: PythonApple
 
       - name: make python iOS
