@@ -22,25 +22,28 @@ jobs:
 
     steps:
 
-      - name: Git Clone Action
+      # - name: Git Clone Action
 
-        uses: sudosubin/git-clone-action@v1.0.1
-        with:
-          # Repository owner and name. Ex: sudosubin/git-clone-action
-          repository: PythonSwiftLink/Python-Apple-support
-          # Git host platform. Ex: github, gitlab, bitbucket, gitee, or else (git.suckless.org, ...)
-          # Git branch or tag to checkout.
-          ref: "3.10"
-          # Relative path from current directory, where to clone.
-          path: PythonApple
+      #   uses: sudosubin/git-clone-action@v1.0.1
+      #   with:
+      #     # Repository owner and name. Ex: sudosubin/git-clone-action
+      #     repository: PythonSwiftLink/Python-Apple-support
+      #     # Git host platform. Ex: github, gitlab, bitbucket, gitee, or else (git.suckless.org, ...)
+      #     # Git branch or tag to checkout.
+      #     ref: "3.10"
+      #     # Relative path from current directory, where to clone.
+      #     path: PythonApple
 
-      - name: make python iOS
-        working-directory: ./PythonApple
-        run: make iOS
+      # - name: make python iOS
+      #   working-directory: ./PythonApple
+      #   run: make iOS
 
-      - name: make python macOS
-        working-directory: ./PythonApple
-        run: make macOS
+      # - name: make python macOS
+      #   working-directory: ./PythonApple
+      #   run: make macOS
             
-
-    
+      - name: unpack ios
+        run: |
+          mkdir ios_export
+          tar -xzvf PythonApple/dist/Python-3.10-iOS-support.custom.tar.gz -C ios_export  
+          
