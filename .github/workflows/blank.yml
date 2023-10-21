@@ -44,6 +44,10 @@ jobs:
             
       - name: unpack ios
         run: |
-          mkdir ios_export
-          tar -xzvf PythonApple/dist/Python-3.10-iOS-support.custom.tar.gz -C ios_export  
+          mkdir -p export/ios
+          mkdir -p export/macos
+          
+          tar -xzvf PythonApple/dist/Python-3.10-iOS-support.custom.tar.gz -C export/ios
+          tar -xzvf PythonApple/dist/Python-3.10-macOS-support.custom.tar.gz -C export/macos
+          
           
