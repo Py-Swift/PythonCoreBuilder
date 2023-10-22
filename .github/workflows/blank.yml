@@ -88,6 +88,7 @@ jobs:
 
   create_package:
     name: Release Packages
+    needs: [build]
     runs-on: ubuntu-latest
 
     steps:
