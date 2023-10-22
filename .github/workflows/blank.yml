@@ -50,8 +50,8 @@ jobs:
           mkdir -p export/macos
           IOS_XC=export/ios/Python.xcframework
           MAC_XC=export/macos/Python.xcframework
-          tar -xzvf PythonApple/dist/Python-3.10-iOS-support.custom.tar.gz -C export/ios
-          tar -xzvf PythonApple/dist/Python-3.10-macOS-support.custom.tar.gz -C export/macos
+          tar -xzvf PythonApple/dist/Python-3.11-iOS-support.custom.tar.gz -C export/ios
+          tar -xzvf PythonApple/dist/Python-3.11-macOS-support.custom.tar.gz -C export/macos
           cp -rf $MAC_XC/macos-arm64_x86_64 $IOS_XC/
           cp -f pyInfo.plist $IOS_XC/Info.plist
 
