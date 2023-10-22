@@ -22,27 +22,26 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      # - name: Git Clone Action
+      - name: Git Clone Action
+        uses: sudosubin/git-clone-action@v1.0.1
+        with:
+          # Repository owner and name. Ex: sudosubin/git-clone-action
+          repository: PythonSwiftLink/Python-Apple-support
+          # Git host platform. Ex: github, gitlab, bitbucket, gitee, or else (git.suckless.org, ...)
+          # Git branch or tag to checkout.
+          ref: "3.10"
+          # Relative path from current directory, where to clone.
+          path: PythonApple
 
-      #   uses: sudosubin/git-clone-action@v1.0.1
-      #   with:
-      #     # Repository owner and name. Ex: sudosubin/git-clone-action
-      #     repository: PythonSwiftLink/Python-Apple-support
-      #     # Git host platform. Ex: github, gitlab, bitbucket, gitee, or else (git.suckless.org, ...)
-      #     # Git branch or tag to checkout.
-      #     ref: "3.10"
-      #     # Relative path from current directory, where to clone.
-      #     path: PythonApple
+      - name: make python iOS
+        working-directory: ./PythonApple
+        run: make iOS
 
-      # - name: make python iOS
-      #   working-directory: ./PythonApple
-      #   run: make iOS
-
-      # - name: make python macOS
-      #   working-directory: ./PythonApple
-      #   run: make macOS
+      - name: make python macOS
+        working-directory: ./PythonApple
+        run: make macOS
             
-      - name: unpack ios
+      - name: create multiplatform xcframework
         run: |
           mkdir -p export/ios
           mkdir -p export/macos
@@ -51,6 +50,25 @@ jobs:
           tar -xzvf PythonApple/dist/Python-3.10-iOS-support.custom.tar.gz -C export/ios
           tar -xzvf PythonApple/dist/Python-3.10-macOS-support.custom.tar.gz -C export/macos
           cp -rf $MAC_XC/macos-arm64_x86_64 $IOS_XC/
-
           cp -f pyInfo.plist $IOS_XC/Info.plist
-          
+
+      - name: zip xcframework
+        working-directory: export/ios
+        run: zip -r Python.zip Python.xcframework
+
+      - name: zip ios python-stdlib
+        working-directory: export/ios
+        run: zip -r ios-python-stdlib.zip python-stdlib
+      
+      - name: zip mac python-stdlib
+        working-directory: export/macos
+        run: zip -r macos-python-stdlib.zip python-stdlib
+      
+      - name: release PythonCore
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "export/ios/Python.zip, export/ios/ios-python-stdlib.zip, export/macos/macos-python-stdlib.zip"
+          tag: ${{ github.event.inputs.tag }}
+          repo: PythonCore
+          token: ${{ secrets.Homebrew }}
+          allowUpdates: true
