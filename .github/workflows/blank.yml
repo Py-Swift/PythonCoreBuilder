@@ -79,7 +79,7 @@ jobs:
           SwiftPackageGen \
             ./PythonCore.yml \
             ${{ github.event.inputs.tag }} \
-            --output output/PythonCorePackage.swift            
+            --output output/PythonCore/Package.swift            
 
       - uses: actions/upload-artifact@v3
         with:
@@ -103,7 +103,7 @@ jobs:
         env:
           API_TOKEN_GITHUB: ${{ secrets.Homebrew }}
         with:
-          source-directory: 'PythonCore'
+          source-directory: './PythonCore'
           destination-github-username: 'pythonswiftlink'
           destination-repository-name: 'PythonCore'
           user-email: pythonswiftlink@gmail.com
