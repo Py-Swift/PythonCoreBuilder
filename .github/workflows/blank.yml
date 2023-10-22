@@ -69,7 +69,7 @@ jobs:
       
       - name: move items to output
         run: |
-            mkdir -p output/PythonCore
+            mkdir -p output/
             cp -f export/ios/Python.zip output/
             cp -f export/ios/ios-python-stdlib.zip output/
             cp -f export/macos/macos-python-stdlib.zip output/
@@ -79,7 +79,7 @@ jobs:
           SwiftPackageGen \
             ./PythonCore.yml \
             ${{ github.event.inputs.tag }} \
-            --output output/PythonCore/Package.swift            
+            --output output/PyCorePackage.swift            
 
       - uses: actions/upload-artifact@v3
         with:
@@ -96,6 +96,16 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: release-output
+      
+      - name: Git Clone PythonCore
+        uses: sudosubin/git-clone-action@v1.0.1
+        with:
+          repository: PythonSwiftLink/PythonCore
+          ref: "master"
+          path: PythonCore
+          
+      - name: update PythonCore
+        run: mv -f PyCorePackage.swift PythonCore/Package.swift
         
       # commit new package to kivypythoncore/master
       - name: commit Package.swift to PythonCore master
