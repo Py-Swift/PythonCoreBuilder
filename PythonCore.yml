@@ -1,0 +1,19 @@
+owner: PythonSwiftLink
+repository: PythonCore
+swift_version: 5.8
+products:
+  - library: PythonCore
+    targets:
+      - PythonCore
+      - Python
+
+targets:
+- target: PythonCore
+  dependencies:
+    - binary: ./export/ios/Python.zip
+  linkerSettings:
+    - library: bz2
+    - library: z
+    - library: ncurses
+    - library: sqlite3
+

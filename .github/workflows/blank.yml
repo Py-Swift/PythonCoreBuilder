@@ -27,11 +27,13 @@ jobs:
         with:
           # Repository owner and name. Ex: sudosubin/git-clone-action
           repository: PythonSwiftLink/Python-Apple-support
-          # Git host platform. Ex: github, gitlab, bitbucket, gitee, or else (git.suckless.org, ...)
-          # Git branch or tag to checkout.
           ref: "3.10"
-          # Relative path from current directory, where to clone.
           path: PythonApple
+      
+      - name: brew installs
+        run: |
+          brew tap PythonSwiftLink/tools
+          brew install swiftpackagegen
 
       - name: make python iOS
         working-directory: ./PythonApple
@@ -64,10 +66,57 @@ jobs:
         working-directory: export/macos
         run: zip -r macos-python-stdlib.zip python-stdlib
       
+      - name: move items to output
+        run: |
+            mkdir -p output/PythonCore
+            cp -f export/ios/Python.zip output/
+            cp -f export/ios/ios-python-stdlib.zip output/
+            cp -f export/macos/macos-python-stdlib.zip output/
+
+      - name: update Numpy package.swift
+        run: |
+          SwiftPackageGen \
+            ./PythonCore.yml \
+            ${{ github.event.inputs.tag }} \
+            --output output/PythonCorePackage.swift            
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: release-output
+          path: ./output
+          
+
+  #######################    
+  #### done on osx ######
+  #######################
+  # ubuntu
+
+  create_package:
+    name: Release Packages
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - uses: actions/download-artifact@v3
+        with:
+          name: release-output
+        
+      # commit new package to kivypythoncore/master
+      - name: commit Package.swift to PythonCore master
+        uses: cpina/github-action-push-to-another-repository@main
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.Homebrew }}
+        with:
+          source-directory: 'PythonCore'
+          destination-github-username: 'pythonswiftlink'
+          destination-repository-name: 'PythonCore'
+          user-email: pythonswiftlink@gmail.com
+          target-branch: master
+      
       - name: release PythonCore
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "export/ios/Python.zip, export/ios/ios-python-stdlib.zip, export/macos/macos-python-stdlib.zip"
+          artifacts: "Python.zip, ios-python-stdlib.zip, macos-python-stdlib.zip"
           tag: ${{ github.event.inputs.tag }}
           repo: PythonCore
           token: ${{ secrets.Homebrew }}
