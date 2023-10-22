@@ -30,10 +30,10 @@ jobs:
           ref: "3.10"
           path: PythonApple
       
-      - name: brew installs
-        run: |
-          brew tap PythonSwiftLink/tools
-          brew install swiftpackagegen
+      # - name: brew installs
+      #   run: |
+      #     brew tap PythonSwiftLink/tools
+      #     brew install swiftpackagegen
 
       - name: make python iOS
         working-directory: ./PythonApple
