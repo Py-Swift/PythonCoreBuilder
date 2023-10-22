@@ -84,12 +84,6 @@ jobs:
         with:
           name: release-output
           path: ./output
-          
-
-  #######################    
-  #### done on osx ######
-  #######################
-  # ubuntu
 
   create_package:
     name: Release Packages
