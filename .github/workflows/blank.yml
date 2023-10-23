@@ -61,13 +61,13 @@ jobs:
 
       - name: zip ios python-stdlib
         working-directory: export/ios
-        #run: zip -r ios-python-stdlib.zip python-stdlib
-        run: mv -f python-stdlib.zip ios-python-stdlib.zip
+        run: zip -r ios-python-stdlib.zip python-stdlib
+        #run: mv -f python-stdlib.zip ios-python-stdlib.zip
       
       - name: zip mac python-stdlib
         working-directory: export/macos
-        #run: zip -r macos-python-stdlib.zip python-stdlib
-        run: mv -f python-stdlib.zip macos-python-stdlib.zip
+        run: zip -r macos-python-stdlib.zip python-stdlib
+        #run: mv -f python-stdlib.zip macos-python-stdlib.zip
       
       - name: move items to output
         run: |
