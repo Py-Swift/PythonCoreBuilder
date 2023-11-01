@@ -1,6 +1,7 @@
 owner: PythonSwiftLink
 repository: PythonCore
-swift_version: 5.8
+swift_version: 5.9
+macOS: true
 products:
   - library: PythonCore
     targets:
