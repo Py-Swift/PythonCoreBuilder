@@ -84,7 +84,15 @@ jobs:
             mkdir -p output/
             cp -f export/ios/Python.zip output/
             cp -f export/ios/ios-python-stdlib.zip output/
-            cp -f export/macos/macos-python-stdlib.zip output/          
+            cp -f export/macos/macos-python-stdlib.zip output/     
+            
+      - name: update package.swift
+        run: |
+          SwiftPackageGen \
+            ./PythonCore.yml \
+            ${{ github.event.inputs.tag }} \
+            --input PythonCore/package.swift \
+            --output output/PyCorePackage.swift
 
       - uses: actions/upload-artifact@v3
         with:
