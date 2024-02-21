@@ -89,6 +89,7 @@ jobs:
       - name: update package.swift
         run: |
           SwiftPackageGen \
+            generate \
             ./PythonCore.yml \
             ${{ github.event.inputs.tag }} \
             --input PythonCore/package.swift \
