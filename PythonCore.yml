@@ -6,6 +6,7 @@ products:
   - library: PythonCore
     targets:
       - PythonCore
+      - PythonExtra
       - Python
 
 targets:
