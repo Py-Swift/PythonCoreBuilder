@@ -35,6 +35,14 @@ jobs:
           ref: "3.11"
           path: PythonApple
       
+      - name: Clone PythonCore
+        uses: sudosubin/git-clone-action@v1.0.1
+        with:
+          # Repository owner and name. Ex: sudosubin/git-clone-action
+          repository: PythonSwiftLink/PythonCore
+          ref: "master"
+          path: PythonCore
+      
       - name: brew installs
         run: |
           brew tap PythonSwiftLink/tools
@@ -92,7 +100,7 @@ jobs:
             generate \
             ./PythonCore.yml \
             ${{ github.event.inputs.tag }} \
-            --input PythonCore/package.swift \
+            --input PythonCore/Package.swift \
             --output output/PyCorePackage.swift
 
       - uses: actions/upload-artifact@v3
