@@ -18,15 +18,15 @@ jobs:
     name: Build Python
     # The type of runner that the job will run on
     #runs-on: self-hosted
-    runs-on: macos-13
+    runs-on: macos-14
     permissions:
         contents: write
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: '15.2'
+      # - uses: actions/checkout@v4
+      # - uses: maxim-lobanov/setup-xcode@v1
+      #   with:
+      #     xcode-version: '15.2'
       - name: Git Clone Action
         uses: sudosubin/git-clone-action@v1.0.1
         with:
