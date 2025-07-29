@@ -84,14 +84,17 @@ jobs:
           #cp -f template/module.modulemap $IOS_XC/macos-arm64_x86_64/Headers/
           #cp -f template/module.modulemap $IOS_XC/ios-arm64/Headers/
           #cp -f template/module.modulemap $IOS_XC/ios-arm64_x86_64-simulator/Headers/
-          cd export/ios
-          mv Python.xcframework libPython.xcframework
+          #cd export/ios
+          
           mkdir -p export/ios/ios-arm64
           mkdir -p export/ios/ios-arm64_x86_64-simulator
-          mv libPython.xcframework/ios-arm64/lib export/ios/ios-arm64/lib
-          mv libPython.xcframework/ios-arm64_x86_64-simulator/lib export/ios/ios-arm64_x86_64-simulator/lib
+          mv $IOS_XC/ios-arm64/lib export/ios/ios-arm64/lib
+          mv $IOS_XC/ios-arm64_x86_64-simulator/lib export/ios/ios-arm64_x86_64-simulator/lib
           
-          mv libPython.xcframework/macos-arm64_x86_64/Python.framework/Versions/3.11/lib export/macos/macos-arm64_x86_64/lib
+          mv $IOS_XC/macos-arm64_x86_64/Python.framework/Versions/3.11/lib export/macos/macos-arm64_x86_64/lib
+
+          mv export/ios/Python.xcframework export/ios/libPython.xcframework
+          
       - name: zip xcframework
         working-directory: export/ios
         run: zip -r libPython.zip libPython.xcframework
