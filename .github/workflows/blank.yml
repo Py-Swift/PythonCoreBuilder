@@ -86,6 +86,8 @@ jobs:
           
           mkdir -p export/ios/ios-arm64
           mkdir -p export/ios/ios-arm64_x86_64-simulator
+          mkdir -p export/macos/macos-arm64_x86_64
+
           mv $IOS_XC/ios-arm64/lib export/ios/ios-arm64/lib
           mv $IOS_XC/ios-arm64_x86_64-simulator/lib export/ios/ios-arm64_x86_64-simulator/lib
           ls export/ios/Python.xcframework/macos-arm64_x86_64/Python.framework/Versions
