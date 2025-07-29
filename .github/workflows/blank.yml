@@ -124,7 +124,7 @@ jobs:
             --input PythonCore/Package.swift \
             --output output/PyCorePackage.swift
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: release-output
           path: ./output
