@@ -49,50 +49,71 @@ jobs:
           brew install swiftpackagegen
 
       - name: make python iOS
-        working-directory: ./PythonApple
-        run: make iOS
-
+        run: |
+          mkdir -p export/ios
+          wget https://github.com/beeware/Python-Apple-support/releases/download/3.11-b7/Python-3.11-iOS-support.b7.tar.gz
+          tar -xzvf Python-3.11-iOS-support.b7.tar.gz -C export/ios
+          rm -f Python-3.11-iOS-support.b7.tar.gz
+      # - name: make python iOS
+      #   working-directory: ./PythonApple
+      #   run: make iOS
       - name: make python macOS
-        working-directory: ./PythonApple
-        run: make macOS
+        run: |
+          mkdir -p export/macos
+          wget https://github.com/beeware/Python-Apple-support/releases/download/3.11-b7/Python-3.11-macOS-support.b7.tar.gz
+          tar -xzvf Python-3.11-macOS-support.b7.tar.gz -C export/macos
+          rm -f Python-3.11-macOS-support.b7.tar.gz
+      # - name: make python macOS
+      #   working-directory: ./PythonApple
+      #   run: make macOS
             
       - name: create multiplatform xcframework
         run: |
-          mkdir -p export/ios
-          mkdir -p export/macos
+          #mkdir -p export/ios
+          #mkdir -p export/macos
           IOS_XC=export/ios/Python.xcframework
           MAC_XC=export/macos/Python.xcframework
-          tar -xzvf PythonApple/dist/Python-3.11-iOS-support.custom.tar.gz -C export/ios
-          tar -xzvf PythonApple/dist/Python-3.11-macOS-support.custom.tar.gz -C export/macos
+          #tar -xzvf PythonApple/dist/Python-3.11-iOS-support.custom.tar.gz -C export/ios
+          #tar -xzvf PythonApple/dist/Python-3.11-macOS-support.custom.tar.gz -C export/macos
           
           cp -rf $MAC_XC/macos-arm64_x86_64 $IOS_XC/
           cp -f pyInfo.plist $IOS_XC/Info.plist
           
-          cp -f template/module.modulemap $IOS_XC/macos-arm64_x86_64/Headers/
-          cp -f template/module.modulemap $IOS_XC/ios-arm64/Headers/
-          cp -f template/module.modulemap $IOS_XC/ios-arm64_x86_64-simulator/Headers/
-
-
+          #cp -f template/module.modulemap $IOS_XC/macos-arm64_x86_64/Headers/
+          #cp -f template/module.modulemap $IOS_XC/ios-arm64/Headers/
+          #cp -f template/module.modulemap $IOS_XC/ios-arm64_x86_64-simulator/Headers/
+          cd export/ios
+          mv Python.xcframework libPython.xcframework
+          mkdir export/ios/ios-arm64
+          mkdir export/ios/ios-arm64_x86_64-simulator
+          mv libPython.xcframework/ios-arm64/lib export/ios/ios-arm64/lib
+          mv libPython.xcframework/ios-arm64_x86_64-simulator/lib export/ios/ios-arm64_x86_64-simulator/lib
+          mkdir export/macos
+          mv libPython.xcframework/macos-arm64_x86_64/Python.framework/Versions/3.11/lib export/macos/macos-arm64_x86_64/lib
       - name: zip xcframework
         working-directory: export/ios
-        run: zip -r Python.zip Python.xcframework
+        run: zip -r libPython.zip libPython.xcframework
 
       - name: zip ios python-stdlib
         working-directory: export/ios
-        run: zip -r ios-python-stdlib.zip python-stdlib
+        run: zip -r ios-python-lib.zip ios-arm64
         #run: mv -f python-stdlib.zip ios-python-stdlib.zip
-      
+      - name: zip ios sim python-stdlib
+        working-directory: export/ios
+        run: zip -r ios-sim-python-lib.zip ios-arm64_x86_64-simulator
+
       - name: zip mac python-stdlib
         working-directory: export/macos
-        run: zip -r macos-python-stdlib.zip python-stdlib
+        run: zip -r macos-python-lib.zip macos-arm64_x86_64
         #run: mv -f python-stdlib.zip macos-python-stdlib.zip
       
       - name: move items to output
         run: |
             mkdir -p output/
-            cp -f export/ios/Python.zip output/
-            cp -f export/ios/ios-python-stdlib.zip output/
-            cp -f export/macos/macos-python-stdlib.zip output/     
+            cp -f export/ios/libPython.zip output/
+            cp -f export/ios/ios-python-lib.zip output/
+            cp -f export/ios/ios-sim-python-lib.zip output/
+            cp -f export/macos/macos-python-lib.zip output/     
             
       - name: update package.swift
         run: |
@@ -144,7 +165,7 @@ jobs:
       - name: release PythonCore
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "Python.zip, ios-python-stdlib.zip, macos-python-stdlib.zip"
+          artifacts: "libPython.zip, ios-python-lib.zip, ios-sim-python-lib.zip, macos-python-lib.zip"
           tag: ${{ github.event.inputs.tag }}
           repo: PythonCore
           token: ${{ secrets.Homebrew }}

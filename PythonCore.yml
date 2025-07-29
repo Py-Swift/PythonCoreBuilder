@@ -6,16 +6,17 @@ products:
   - library: PythonCore
     targets:
       - PythonCore
-      - PythonExtra
-      - Python
 
 targets:
-- target: PythonCore
+- target: Python
   dependencies:
-    - binary: ./export/ios/Python.zip
+    - binary: ./export/ios/libPython.zip
   linkerSettings:
     - library: bz2
     - library: z
     - library: ncurses
     - library: sqlite3
+- target: PythonCore
+  dependencies:
+    - target: "Python"
 
