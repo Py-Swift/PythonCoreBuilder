@@ -120,14 +120,18 @@ jobs:
             cp -f export/ios/ios-sim-python-lib.zip output/
             cp -f export/macos/macos-python-lib.zip output/     
             
-      - name: update package.swift
+      # - name: update package.swift
+      #   run: |
+      #     SwiftPackageGen \
+      #       generate \
+      #       ./PythonCore.yml \
+      #       ${{ github.event.inputs.tag }} \
+      #       --input PythonCore/Package.swift \
+      #       --output output/PyCorePackage.swift
+      - name: update Package.swift
         run: |
-          SwiftPackageGen \
-            generate \
-            ./PythonCore.yml \
-            ${{ github.event.inputs.tag }} \
-            --input PythonCore/Package.swift \
-            --output output/PyCorePackage.swift
+          SHA=$(shasum -a 256 output/libPython.zip)
+          python3 generate_package output/PyCorePackage.swift ${{ github.event.inputs.tag }} $SHA
 
       - uses: actions/upload-artifact@v4
         with:
