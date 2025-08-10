@@ -131,7 +131,7 @@ jobs:
       - name: update Package.swift
         run: |
           SHA=$(shasum -a 256 output/libPython.zip)
-          python3 generate_package output/PyCorePackage.swift ${{ github.event.inputs.tag }} $SHA
+          python3 generate_package.py output/PyCorePackage.swift ${{ github.event.inputs.tag }} $SHA
 
       - uses: actions/upload-artifact@v4
         with:
