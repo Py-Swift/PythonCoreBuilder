@@ -1,0 +1,132 @@
+# This is a basic workflow to help you get started with Actions
+
+name: New Build
+
+# Controls when the workflow will run
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'input new release tag'
+        required: true
+        type: string
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    name: Build Python
+    # The type of runner that the job will run on
+    #runs-on: self-hosted
+    runs-on: macos-14
+    permissions:
+        contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+      # - uses: maxim-lobanov/setup-xcode@v1
+      #   with:
+      #     xcode-version: '15.2'
+      - name: Git Clone Action
+        uses: sudosubin/git-clone-action@v1.0.1
+        with:
+          # Repository owner and name. Ex: sudosubin/git-clone-action
+          repository: PythonSwiftLink/Python-Apple-support
+          ref: "3.11"
+          path: PythonApple
+      
+      - name: Clone PythonCore
+        uses: sudosubin/git-clone-action@v1.0.1
+        with:
+          # Repository owner and name. Ex: sudosubin/git-clone-action
+          repository: PythonSwiftLink/PythonCore
+          ref: "master"
+          path: PythonCore
+      
+      - name: brew installs
+        run: |
+          brew tap PythonSwiftLink/tools
+          brew install swiftpackagegen
+
+      - name: make python iOS
+        run: |
+          mkdir -p ios
+          wget https://github.com/beeware/Python-Apple-support/releases/download/3.11-b7/Python-3.11-iOS-support.b7.tar.gz
+          tar -xzvf Python-3.11-iOS-support.b7.tar.gz -C ios
+          rm -f Python-3.11-iOS-support.b7.tar.gz
+
+      - name: make python macOS
+        run: |
+          mkdir -p macos
+          wget https://github.com/beeware/Python-Apple-support/releases/download/3.11-b7/Python-3.11-macOS-support.b7.tar.gz
+          tar -xzvf Python-3.11-macOS-support.b7.tar.gz -C macos
+          rm -f Python-3.11-macOS-support.b7.tar.gz
+            
+      - name: create multiplatform xcframework
+        run: |
+          IOS_XC=ios/Python.xcframework
+          MAC_XC=macos/Python.xcframework
+    
+          cp -rf $MAC_XC/macos-arm64_x86_64 $IOS_XC/
+          cp -f pyInfo.plist $IOS_XC/Info.plist
+          
+          mv $MAC_XC/macos-arm64_x86_64 $IOS_XC/
+          mkdir -p output
+          mv ios/Python.xcframework output/libPython.xcframework
+
+      - name: zip xcframework
+        working-directory: output
+        run: zip -r libPython.zip libPython.xcframework
+
+      - name: update Package.swift
+        run: |
+          SHA=$(shasum -a 256 output/libPython.zip)
+          python3 generate_package.py output/PyCorePackage.swift ${{ github.event.inputs.tag }} $SHA
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-output
+          path: ./output
+
+  create_package:
+    name: Release Packages
+    needs: [build]
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-output
+      
+      - name: Git Clone PythonCore
+        uses: sudosubin/git-clone-action@v1.0.1
+        with:
+          repository: PythonSwiftLink/PythonCore
+          ref: "master"
+          path: PythonCore
+          
+      - name: update PythonCore
+        run: mv -f PyCorePackage.swift PythonCore/Package.swift
+        
+      # commit new package to kivypythoncore/master
+      - name: commit Package.swift to PythonCore master
+        uses: cpina/github-action-push-to-another-repository@main
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.Homebrew }}
+        with:
+          source-directory: './PythonCore'
+          destination-github-username: 'py-swift'
+          destination-repository-name: 'PythonCore'
+          user-email: pythonswiftlink@gmail.com
+          target-branch: master
+      
+      - name: release PythonCore
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "libPython.zip"
+          #artifacts: "libPython.zip, ios-python-lib.zip, ios-sim-python-lib.zip, macos-python-lib.zip"
+          tag: ${{ github.event.inputs.tag }}
+          repo: PythonCore
+          token: ${{ secrets.Homebrew }}
+          allowUpdates: true
