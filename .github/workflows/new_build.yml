@@ -70,7 +70,6 @@ jobs:
           cp -rf $MAC_XC/macos-arm64_x86_64 $IOS_XC/
           cp -f pyInfo.plist $IOS_XC/Info.plist
           
-          mv $MAC_XC/macos-arm64_x86_64 $IOS_XC/
           mkdir -p output
           mv ios/Python.xcframework output/libPython.xcframework
 
