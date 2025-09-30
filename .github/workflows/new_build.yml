@@ -32,7 +32,7 @@ jobs:
         with:
           # Repository owner and name. Ex: sudosubin/git-clone-action
           repository: PythonSwiftLink/Python-Apple-support
-          ref: "3.11"
+          ref: "3.13"
           path: PythonApple
       
       - name: Clone PythonCore
@@ -51,16 +51,16 @@ jobs:
       - name: make python iOS
         run: |
           mkdir -p ios
-          wget https://github.com/beeware/Python-Apple-support/releases/download/3.11-b7/Python-3.11-iOS-support.b7.tar.gz
-          tar -xzvf Python-3.11-iOS-support.b7.tar.gz -C ios
-          rm -f Python-3.11-iOS-support.b7.tar.gz
+          wget https://github.com/beeware/Python-Apple-support/releases/download/3.13-b11/Python-3.13-iOS-support.b11.tar.gz
+          tar -xzvf Python-3.13-iOS-support.b11.tar.gz -C ios
+          rm -f Python-3.13-iOS-support.b11.tar.gz
 
       - name: make python macOS
         run: |
           mkdir -p macos
-          wget https://github.com/beeware/Python-Apple-support/releases/download/3.11-b7/Python-3.11-macOS-support.b7.tar.gz
-          tar -xzvf Python-3.11-macOS-support.b7.tar.gz -C macos
-          rm -f Python-3.11-macOS-support.b7.tar.gz
+          wget https://github.com/beeware/Python-Apple-support/releases/download/3.13-b11/Python-3.13-macOS-support.b11.tar.gz
+          tar -xzvf Python-3.13-macOS-support.b11.tar.gz -C macos
+          rm -f Python-3.13-macOS-support.b11.tar.gz
             
       - name: create multiplatform xcframework
         run: |
