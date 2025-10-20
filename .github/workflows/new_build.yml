@@ -10,6 +10,10 @@ on:
         description: 'input new release tag'
         required: true
         type: string
+      beeware_build:
+        description: 'beeware build'
+        type: string
+        default: 'b11'
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -18,7 +22,7 @@ jobs:
     name: Build Python
     # The type of runner that the job will run on
     #runs-on: self-hosted
-    runs-on: macos-14
+    runs-on: macos-15
     permissions:
         contents: write
 
@@ -50,17 +54,19 @@ jobs:
 
       - name: make python iOS
         run: |
+          BUILD=${{ github.event.inputs.tag }}
           mkdir -p ios
-          wget https://github.com/beeware/Python-Apple-support/releases/download/3.13-b11/Python-3.13-iOS-support.b11.tar.gz
-          tar -xzvf Python-3.13-iOS-support.b11.tar.gz -C ios
-          rm -f Python-3.13-iOS-support.b11.tar.gz
+          wget https://github.com/beeware/Python-Apple-support/releases/download/3.13-$BUILD/Python-3.13-iOS-support.$BUILD.tar.gz
+          tar -xzvf Python-3.13-iOS-support.$BUILD.tar.gz -C ios
+          rm -f Python-3.13-iOS-support.$BUILD.tar.gz
 
       - name: make python macOS
         run: |
+          BUILD=${{ github.event.inputs.tag }}
           mkdir -p macos
-          wget https://github.com/beeware/Python-Apple-support/releases/download/3.13-b11/Python-3.13-macOS-support.b11.tar.gz
-          tar -xzvf Python-3.13-macOS-support.b11.tar.gz -C macos
-          rm -f Python-3.13-macOS-support.b11.tar.gz
+          wget https://github.com/beeware/Python-Apple-support/releases/download/3.13-$BUILD/Python-3.13-macOS-support.$BUILD.tar.gz
+          tar -xzvf Python-3.13-macOS-support.$BUILD.tar.gz -C macos
+          rm -f Python-3.13-macOS-support.$BUILD.tar.gz
             
       - name: create multiplatform xcframework
         run: |
